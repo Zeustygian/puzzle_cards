@@ -1,5 +1,6 @@
 package;
 
+import flixel.animation.FlxBaseAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -31,23 +32,18 @@ class Card extends FlxSprite {
 
 class PlayState extends FlxState
 {
+	var array_card_solution = new Array<Array<Card>>();
+	var solution_flip_state = new Array<Bool>();
 	var array_card = new Array<Array<Card>>();
+	var player_flip_state = new Array<Bool>();
 
 	override public function create()
 	{
 		super.create();
-		var pos = [50, 120, 190];
 
-		for (i in 0...3) {
-			var array_line:Array<Card> = [];
-			for (a in 0 ... 3) {
-				var card:Card = new Card(pos[a], pos[i]);
-				card.updateHitbox();
-				array_line.push(card);
-				add(card);
-			}
-			array_card.push(array_line);
-		}
+		generate_puzzle_solution();
+
+		generate_puzzle_player();
 	}
 
 	override public function update(elapsed:Float)
@@ -65,17 +61,17 @@ class PlayState extends FlxState
 			}
 			line_cursor++;
 		}
+		check_resolved_puzzle();
 	}
 
 	public function click_card(array_card:Array<Array<Card>>, line:Array<Card>, card:Card, index:Int, line_cursor:Int):Void
 	{
-
 		if (line[index].flipped == true)
 			line[index].flipped = false;
 		else
 			line[index].flipped = true;
-
 		switch_around_cards(array_card, line, card, index, line_cursor);
+		update_flip_state();
 	}
 
 	public function switch_around_cards(array_card:Array<Array<Card>>, line:Array<Card>, card:Card, index:Int, line_cursor:Int) {
@@ -107,6 +103,88 @@ class PlayState extends FlxState
 				else
 					array_card[line_cursor + 1][index].flipped = true;
 			}
+		}
+	}
+
+	public function update_flip_state() {
+		player_flip_state = [];
+
+		for (line in array_card) {
+			for (card in line) {
+				if (card.flipped == true)
+					player_flip_state.push(true);
+				else
+					player_flip_state.push(false);
+			}
+		}
+	}
+
+	public function set_solution_flip_state() {
+		solution_flip_state = [];
+
+		for (line in array_card_solution) {
+			for (card in line) {
+				if (card.flipped == true)
+					solution_flip_state.push(true);
+				else
+					solution_flip_state.push(false);
+			}
+		}
+	}
+
+	public function generate_puzzle_solution() {
+		var pos_x = [70, 134, 198];
+		var pos_y = [30, 94, 158];
+
+		for (y in pos_y) {
+			var array_line:Array<Card> = [];
+			for (x in pos_x) {
+				var card:Card = new Card(x, y);
+				card.updateHitbox();
+				array_line.push(card);
+				add(card);
+			}
+			array_card_solution.push(array_line);
+		}
+		set_solution_flip_state();
+		trace(solution_flip_state);
+		trace("-------------");
+	}
+
+	public function generate_puzzle_player() {
+		var pos_x = [70, 134, 198];
+		var pos_y = [250, 314, 378];
+
+		for (y in pos_y) {
+			var array_line:Array<Card> = [];
+			for (x in pos_x) {
+				var card:Card = new Card(x, y);
+				card.updateHitbox();
+				array_line.push(card);
+				add(card);
+			}
+			array_card.push(array_line);
+		}
+		update_flip_state();
+		trace(player_flip_state);
+		trace("-------------");
+	}
+
+	public function check_resolved_puzzle() {
+		var matching_card_state = 0;
+
+		for (i in 0...solution_flip_state.length) {
+			if (player_flip_state[i] != solution_flip_state[i])
+				break;
+			else
+				matching_card_state++;
+		}
+		if (matching_card_state == solution_flip_state.length) {
+			// trace("SOLVED !");
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				FlxG.switchState(new MenuState());
+			});
 		}
 	}
 }
