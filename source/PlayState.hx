@@ -37,12 +37,13 @@ class PlayState extends FlxState
 	var array_card = new Array<Array<Card>>();
 	var player_flip_state = new Array<Bool>();
 
+	var random = new flixel.math.FlxRandom();
+
 	override public function create()
 	{
 		super.create();
 
 		generate_puzzle_solution();
-
 		generate_puzzle_player();
 	}
 
@@ -117,6 +118,8 @@ class PlayState extends FlxState
 					player_flip_state.push(false);
 			}
 		}
+		trace(player_flip_state);
+		trace("###########");
 	}
 
 	public function set_solution_flip_state() {
@@ -145,6 +148,22 @@ class PlayState extends FlxState
 				add(card);
 			}
 			array_card_solution.push(array_line);
+		}
+
+		for (i in 0...random.int(2, 6)) {
+			var rand_row = random.int(0, array_card_solution.length - 1);
+			var rand_index = random.int(0, array_card_solution[rand_row].length - 1);
+
+			// trace(rand_row);
+			// trace(rand_index);
+			// trace("========");
+
+			if (array_card_solution[rand_row][rand_index].flipped == true)
+				array_card_solution[rand_row][rand_index].flipped = false;
+			else
+				array_card_solution[rand_row][rand_index].flipped = true;
+			switch_around_cards(array_card_solution, array_card_solution[rand_row], array_card_solution[rand_row][rand_index], 
+				rand_index, rand_row);
 		}
 		set_solution_flip_state();
 		trace(solution_flip_state);
@@ -179,12 +198,12 @@ class PlayState extends FlxState
 			else
 				matching_card_state++;
 		}
-		if (matching_card_state == solution_flip_state.length) {
-			// trace("SOLVED !");
-			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
-			{
-				FlxG.switchState(new MenuState());
-			});
-		}
+		// if (matching_card_state == solution_flip_state.length) {
+		// 	// trace("SOLVED !");
+		// 	FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		// 	{
+		// 		FlxG.switchState(new MenuState());
+		// 	});
+		// }
 	}
 }
