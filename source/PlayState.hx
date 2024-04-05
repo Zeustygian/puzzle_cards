@@ -44,10 +44,14 @@ class PlayState extends FlxState
 	var soluce_view:Bool = true;
 	var current_view_txt = new FlxText();
 	var random = new flixel.math.FlxRandom();
+	var background = new FlxSprite();
 
 	override public function create()
 	{
 		super.create();
+
+		background.loadGraphic("assets/images/background_one.png");
+		add(background);
 
 		generate_puzzle_solution();
 		create_hide_soluce_button();
@@ -158,8 +162,9 @@ class PlayState extends FlxState
 		switch_button_text.y = hide_button.y + 10;
 		add(switch_button_text);
 
-		current_view_txt.text = "Solution";
-		current_view_txt.size = 24;
+		current_view_txt.text = "GOAL";
+		current_view_txt.size = 32;
+		current_view_txt.color = FlxColor.YELLOW;
 		current_view_txt.x = 100;
 		current_view_txt.y = 30;
 		add(current_view_txt);
@@ -234,7 +239,7 @@ class PlayState extends FlxState
 		if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(hide_button)) {
 			if (soluce_view == true) {
 				soluce_view = false;
-				current_view_txt.text = "Player";
+				current_view_txt.text = "YOU";
 				for (line in array_card_solution) {
 					for (solution_card in line) {
 						solution_card.visible = false;
@@ -247,7 +252,7 @@ class PlayState extends FlxState
 				}
 			} else {
 				soluce_view = true;
-				current_view_txt.text = "Solution";
+				current_view_txt.text = "GOAL";
 				for (line in array_card_solution) {
 					for (solution_card in line) {
 						solution_card.visible = true;
