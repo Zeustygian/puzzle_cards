@@ -50,7 +50,7 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		background.loadGraphic("assets/images/background_one.png");
+		background.loadGraphic("assets/images/background.png");
 		add(background);
 
 		generate_puzzle_solution();
@@ -151,19 +151,18 @@ class PlayState extends FlxState
 
 	public function create_hide_soluce_button() {
 		hide_button.makeGraphic(128, 64, FlxColor.RED);
-		hide_button.x = 200;
+		hide_button.x = 250;
 		hide_button.y = 380;
 		add(hide_button);
-
-		var switch_button_text = new FlxText();
-		switch_button_text.text = "Switch";
-		switch_button_text.size = 24;
-		switch_button_text.x = hide_button.x + 10;
-		switch_button_text.y = hide_button.y + 10;
-		add(switch_button_text);
+		
+		var switch_icon = new FlxSprite();
+		switch_icon.loadGraphic("assets/images/switch_icon.png");
+		switch_icon.x = hide_button.x + 10;
+		switch_icon.y = hide_button.y + 10;
+		add(switch_icon);
 
 		current_view_txt.text = "GOAL";
-		current_view_txt.size = 32;
+		current_view_txt.size = 43;
 		current_view_txt.color = FlxColor.YELLOW;
 		current_view_txt.x = 100;
 		current_view_txt.y = 30;

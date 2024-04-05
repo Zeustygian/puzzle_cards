@@ -32,7 +32,7 @@ class GameOverState extends FlxState
 		add(background);
 
 		game_over = new FlxSprite(15, 60);
-		game_over.loadGraphic(AssetPaths.game_over__png);
+		game_over.loadGraphic(AssetPaths.background__png);
 		add(game_over);
 
 		score = new FlxText(0, 250, FlxG.width, "You peaked at:\n" + totalScore, 16);

@@ -20,7 +20,7 @@ class MenuState extends FlxState
 		super.create();
 
 		background = new FlxSprite();
-		background.loadGraphic(AssetPaths.menu_background__png);
+		background.loadGraphic(AssetPaths.background__png);
 		background.scale.set(FlxG.width / background.width, FlxG.height / background.height);
 		background.updateHitbox();
 		add(background);
