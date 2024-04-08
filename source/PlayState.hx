@@ -41,14 +41,25 @@ class PlayState extends FlxState
 	var array_card = new Array<Array<Card>>();
 	var player_flip_state = new Array<Bool>();
 	var hide_button = new FlxSprite();
+	var finish_button = new FlxSprite();
 	var soluce_view:Bool = true;
 	var current_view_txt = new FlxText();
 	var random = new flixel.math.FlxRandom();
 	var background = new FlxSprite();
+	var score = 0;
+	var score_txt = new FlxText();
+	var pointsSound:flixel.sound.FlxSound;
+
+	public function new(?previous_score:Int = 0) {
+		score = previous_score;
+		super();
+	}
 
 	override public function create()
 	{
 		super.create();
+
+		pointsSound = FlxG.sound.load(AssetPaths.points_sound__ogg);
 
 		background.loadGraphic("assets/images/background.png");
 		add(background);
@@ -67,14 +78,14 @@ class PlayState extends FlxState
 			for (line in array_card) {
 				var index:Int = 0;
 				for (card in line) {
-					if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(card)) {
+					if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(card))
 						click_card(array_card, line, card, index, line_cursor);
-					}
 					index++;
 				}
 				line_cursor++;
 			}
-		}	
+		}
+		check_finish_game();
 		switch_views();
 		check_resolved_puzzle();
 	}
@@ -154,12 +165,23 @@ class PlayState extends FlxState
 		hide_button.x = 250;
 		hide_button.y = 380;
 		add(hide_button);
-		
+
 		var switch_icon = new FlxSprite();
 		switch_icon.loadGraphic("assets/images/switch_icon.png");
 		switch_icon.x = hide_button.x + 10;
 		switch_icon.y = hide_button.y + 10;
 		add(switch_icon);
+
+		finish_button.makeGraphic(85, 64, FlxColor.RED);
+		finish_button.x = 0;
+		finish_button.y = 380;
+		add(finish_button);
+		var finish_text = new FlxText();
+		finish_text.text = "END";
+		finish_text.size = 24;
+		finish_text.x = finish_button.x + 12;
+		finish_text.y = finish_button.y + 15;
+		add(finish_text);
 
 		current_view_txt.text = "GOAL";
 		current_view_txt.size = 43;
@@ -167,6 +189,13 @@ class PlayState extends FlxState
 		current_view_txt.x = 100;
 		current_view_txt.y = 30;
 		add(current_view_txt);
+
+		score_txt.color = FlxColor.YELLOW;
+		score_txt.text = Std.string(score);
+		score_txt.size = 30;
+		score_txt.x = 250;
+		score_txt.y = 40;
+		add(score_txt);
 	}
 
 	public function generate_puzzle_solution() {
@@ -240,14 +269,12 @@ class PlayState extends FlxState
 				soluce_view = false;
 				current_view_txt.text = "YOU";
 				for (line in array_card_solution) {
-					for (solution_card in line) {
+					for (solution_card in line)
 						solution_card.visible = false;
-					}
 				}
 				for (line in array_card) {
-					for (player_card in line) {
+					for (player_card in line)
 						player_card.visible = true;
-					}
 				}
 			} else {
 				soluce_view = true;
@@ -258,11 +285,19 @@ class PlayState extends FlxState
 					}
 				}
 				for (line in array_card) {
-					for (player_card in line) {
+					for (player_card in line)
 						player_card.visible = false;
-					}
 				}
 			}
+		}
+	}
+
+	public function check_finish_game() {
+		if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(finish_button)) {
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				FlxG.switchState(new GameOverState(score));
+			});
 		}
 	}
 
@@ -276,11 +311,10 @@ class PlayState extends FlxState
 				matching_card_state++;
 		}
 		if (matching_card_state == solution_flip_state.length) {
-			// trace("SOLVED !");
-			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
-			{
-				FlxG.switchState(new MenuState());
-			});
+			score += 10;
+			pointsSound.play();
+			score_txt.text = "" + score;
+			FlxG.switchState(new PlayState(score));
 		}
 	}
 }

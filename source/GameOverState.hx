@@ -26,17 +26,13 @@ class GameOverState extends FlxState
 		super.create();
 
 		background = new FlxSprite();
-		background.loadGraphic(AssetPaths.menu_background__png);
-		background.scale.set(FlxG.width / background.width, FlxG.height / background.height);
+		background.loadGraphic(AssetPaths.background__png);
 		background.updateHitbox();
 		add(background);
 
-		game_over = new FlxSprite(15, 60);
-		game_over.loadGraphic(AssetPaths.background__png);
-		add(game_over);
-
-		score = new FlxText(0, 250, FlxG.width, "You peaked at:\n" + totalScore, 16);
+		score = new FlxText(0, 30, FlxG.width, "Your score is:\n\n" + totalScore, 16);
 		score.setFormat(null, 40, FlxColor.WHITE, FlxTextAlign.CENTER);
+		score.color = FlxColor.YELLOW;
 		score.updateHitbox();
 		add(score);
 	}
