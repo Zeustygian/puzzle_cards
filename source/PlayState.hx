@@ -312,7 +312,7 @@ class PlayState extends FlxState
 		}
 		if (matching_card_state == solution_flip_state.length) {
 			score += 10;
-			pointsSound.play();
+			// pointsSound.play();
 			score_txt.text = "" + score;
 			FlxG.switchState(new PlayState(score));
 		}
